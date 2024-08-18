@@ -1,4 +1,7 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 void main() {
   runApp(const MyApp());
@@ -7,11 +10,17 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      home: const MyHomePage(title: 'Flutter Calculator'),
+      theme: ThemeData(
+
+        useMaterial3: true,
+      ),
+      home: const MyHomePage(title: ''),
     );
   }
 }
@@ -26,223 +35,421 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final TextEditingController _controller = TextEditingController();
-  String _input = '';
-  String _result = '';
+  bool valuefirst = false;
+  DateTime? selectedDate;
+  TimeOfDay? selectedTime;
+  final List<IconData> iconslist = [
+    FontAwesomeIcons.gift,
+    FontAwesomeIcons.shirt,
+    FontAwesomeIcons.bagShopping,
+    FontAwesomeIcons.glasses,
+    FontAwesomeIcons.bagShopping,
+    FontAwesomeIcons.wallet,
+    FontAwesomeIcons.hatCowboy,
+  ];
 
-  void _buttonPressed(String value) {
-    setState(() {
-      if (value == 'C') {
-        _input = '';
-        _result = '';
-      } else if (value == '=') {
-        _calculateResult();
-      } else {
-        _input += value;
-      }
-      _controller.text = _result.isNotEmpty ? _result : _input;
-    });
-  }
+  final List<String> imagelist = [
+    'assets/images/watchone.png',
+    'assets/images/watchtwo.png',
+    'assets/images/watchthree.png',
+    'assets/images/watchfour.png',
+    'assets/images/watchone.png',
+    'assets/images/watchtwo.png',
+    'assets/images/watchthree.png',
+    'assets/images/watchfour.png',
+  ];
 
-  void _calculateResult() {
-    try {
-      print('Evaluating: $_input');
-      _result = _evaluateExpression(_input).toString();
-      print('Result: $_result');
-    } catch (e) {
-      print('Error: $e');
-      _result = 'Error';
-    }
-  }
+  final List<String> namelist = [
+    'Redmi Note 9',
+    'Apple Watch 6',
+    'Digital Dial Watch',
+    'Fitness Band',
+    'Redmi Note 9',
+    'Apple Watch 6',
+    'Digital Dial Watch',
+    'Fitness Band',
+  ];
 
-  double _evaluateExpression(String expression) {
-    // Trim any leading or trailing whitespace
-    expression = expression.trim();
-
-    // Validate if the expression is not empty
-    if (expression.isEmpty) {
-      throw FormatException("Invalid expression");
-    }
-
-    // Split the expression into tokens
-    List<String> tokens = [];
-    String currentToken = '';
-
-    for (int i = 0; i < expression.length; i++) {
-      String char = expression[i];
-
-      if (char == '+' || char == '-' || char == 'x' || char == '/') {
-        // If currentToken is not empty, add it to tokens list
-        if (currentToken.isNotEmpty) {
-          tokens.add(currentToken.trim());
-        }
-        // Add operator as separate token
-        tokens.add(char);
-        currentToken = ''; // Reset currentToken
-      } else {
-        currentToken += char; // Build current token character by character
-      }
-    }
-
-    // Add the last token if it exists
-    if (currentToken.isNotEmpty) {
-      tokens.add(currentToken.trim());
-    }
-
-    // Validate tokens
-    if (tokens.isEmpty || tokens.length < 3 || tokens.length % 2 == 0) {
-      throw FormatException("Invalid expression");
-    }
-
-    // Parse and evaluate the expression
-    double total = double.parse(tokens[0]);
-    for (int i = 1; i < tokens.length; i += 2) {
-      String operator = tokens[i];
-      double nextNumber = double.parse(tokens[i + 1]);
-
-      switch (operator) {
-        case '+':
-          total += nextNumber;
-          break;
-        case '-':
-          total -= nextNumber;
-          break;
-        case 'x':
-          total *= nextNumber;
-          break;
-        case '/':
-          total /= nextNumber;
-          break;
-        default:
-          throw FormatException("Invalid operator: $operator");
-      }
-    }
-
-    return total;
-  }
-
-  Widget _buildButton(String text, {Color? backgroundColor, Widget? icon}) {
-    return SizedBox(
-      height: 76,
-      width: 76,
-      child: OutlinedButton(
-        onPressed: () => _buttonPressed(text),
-        style: OutlinedButton.styleFrom(
-          side: BorderSide.none,
-          backgroundColor:
-              backgroundColor ?? Color(0xff4E505F), // Default color
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
-          ),
-          textStyle: TextStyle(
-            fontSize: 32,
-            color: Colors.white, // Default text color
-          ),
-        ),
-        child: icon == null
-            ? Center(
-                child: Text(text,
-                    style: TextStyle(fontSize: 32, color: Colors.white)),
-              )
-            : Center(child: icon),
-      ),
-    );
-  }
+  final List<Color> colors = [
+    Color(0xffF17547),
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        color: Color(0xff17171C),
-        width: double.infinity,
-        height: double.infinity,
-        child: Column(
-          children: [
-            Spacer(),
-            TextField(
-              textAlign: TextAlign.right,
-              controller: _controller,
-              readOnly: true,
-              style: TextStyle(color: Colors.white, fontSize: 55),
-              decoration: InputDecoration(
-                border: InputBorder.none,
-                contentPadding: EdgeInsets.all(24),
+        appBar: AppBar(),
+        body: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              sliver: SliverList(
+                delegate: SliverChildListDelegate([
+                  Row(
+                    children: [
+                      Container(
+                          width: 41,
+                          height: 41,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(75),
+                              color: Color(0xffD9D9D9)),
+                          child: Icon(Icons.menu, size: 22)),
+                      Spacer(),
+                      Container(
+                          width: 41,
+                          height: 41,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(75),
+                              color: Color(0xffD9D9D9)),
+                          child: Icon(
+                            Icons.search,
+                            size: 22,
+                          )),
+                    ],
+                  ),
+                  Container(height: 27),
+                  Row(
+                    children: [
+                      Text('Hello Sumair',
+                          style: (TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold))),
+                      Container(width: 10),
+                      Icon(Icons.waving_hand_rounded, color: Color(0xffF17547)),
+                    ],
+                  ),
+                  Container(height: 7),
+                  Text('Let\'s Start Shopping',
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 107, 107, 107))),
+                  Container(height: 20),
+                  salerow(),
+                  SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Text('Top Categories',
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 22,
+                              fontWeight: FontWeight.bold)),
+                      Spacer(),
+                      InkWell(
+                        child: Text('See All',
+                            style: TextStyle(
+                              color: Color(0xffF17547),
+                              fontSize: 22,
+                            )),
+                        onTap: () {},
+                      ),
+                    ],
+                  ),
+                  Container(height: 20),
+                  Container(
+                    height: 75,
+                    width: double.infinity,
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: iconslist.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 17.0),
+                          child: Container(
+                            width: 75,
+                            height: 75,
+                            decoration: BoxDecoration(
+                                color: Color(0xffF2F2F2),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(
+                                    color: Color.fromARGB(255, 230, 230, 230),
+                                    width: 2)),
+                            child: Center(
+                              child: FaIcon(
+                                iconslist[index],
+                                size: 30.0,
+                                color: Colors.black.withOpacity(0.5),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                ]),
               ),
             ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildButton('C'),
-                _buildButton('('),
-                _buildButton(')'),
-                _buildButton('/', backgroundColor: Color(0xff4B5EFC)),
-              ],
+            SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              sliver: SliverGrid(
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 20,
+                  mainAxisSpacing: 20,
+                  childAspectRatio: 0.78,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    return Stack(alignment: Alignment.center, children: [
+                      Container(
+                          decoration: BoxDecoration(
+                            color: Color(0xffF2F2F2),
+                            borderRadius: BorderRadius.circular(15),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(20.0),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 70,
+                                      height: 35,
+                                      child: Center(
+                                        child: Text('50% OFF',
+                                            style: TextStyle(
+                                                color: Colors.black,
+                                                fontSize: 12)),
+                                      ),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(35)),
+                                    ),
+                                    Spacer(),
+                                    Container(
+                                      width: 35,
+                                      height: 35,
+                                      child: Center(
+                                        child: FaIcon(FontAwesomeIcons.heart,
+                                            size: 20),
+                                      ),
+                                      decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          borderRadius:
+                                              BorderRadius.circular(35)),
+                                    ),
+                                  ],
+                                ),
+                                Spacer(),
+                                Text(namelist[index],
+                                    style: TextStyle(
+                                        color: Colors.black.withOpacity(0.75),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16)),
+                                Row(
+                                  children: [
+                                    Text('\$129',
+                                        style: TextStyle(
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16)),
+                                    Spacer(),
+                                    Text('\$260',
+                                        style: TextStyle(
+                                            color:
+                                                Colors.black.withOpacity(0.6),
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            decoration:
+                                                TextDecoration.lineThrough)),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          )),
+                      Container(
+                          width: double.infinity,
+                          height: 90,
+                          decoration: BoxDecoration(
+                              image: DecorationImage(
+                            image: AssetImage(imagelist[index]),
+                            fit: BoxFit.fitHeight,
+                          ))),
+                    ]);
+                  },
+                  childCount: imagelist.length,
+                ),
+              ),
             ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildButton('7', backgroundColor: Color(0xff2E2F38)),
-                _buildButton('8', backgroundColor: Color(0xff2E2F38)),
-                _buildButton('9', backgroundColor: Color(0xff2E2F38)),
-                _buildButton('x', backgroundColor: Color(0xff4B5EFC)),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildButton('4', backgroundColor: Color(0xff2E2F38)),
-                _buildButton('5', backgroundColor: Color(0xff2E2F38)),
-                _buildButton('6', backgroundColor: Color(0xff2E2F38)),
-                _buildButton('-', backgroundColor: Color(0xff4B5EFC)),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildButton('1', backgroundColor: Color(0xff2E2F38)),
-                _buildButton('2', backgroundColor: Color(0xff2E2F38)),
-                _buildButton('3', backgroundColor: Color(0xff2E2F38)),
-                _buildButton('+', backgroundColor: Color(0xff4B5EFC)),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                _buildButton('0', backgroundColor: Color(0xff2E2F38)),
-                _buildButton('.', backgroundColor: Color(0xff2E2F38)),
-                SizedBox(
-                  height: 76,
-                  width: 167,
-                  child: OutlinedButton(
-                      onPressed: () => _buttonPressed('='),
-                      style: OutlinedButton.styleFrom(
-                        side: BorderSide.none,
-                        backgroundColor: Color(0xff4B5EFC), // Default color
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(24),
+          ],
+        ));
+  }
+}
+
+class salerow extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      child: Row(
+        children: [
+          Container(
+              width: 285,
+              height: 143,
+              decoration: BoxDecoration(
+                  color: Color(0xffF17547),
+                  borderRadius: BorderRadius.circular(15)),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 150,
+                          height: 42,
+                          child: Text('20% OFF DURING THIS SUMMER',
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold)),
                         ),
-                        textStyle: TextStyle(
-                          fontSize: 32,
-                          color: Colors.white, // Default text color
+                        Container(
+                          height: 13,
+                        ),
+                        OutlinedButton(
+                            onPressed: () {},
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              fixedSize: Size(120, 34),
+                              side: BorderSide.none,
+                            ),
+                            child: Text('Get Now',
+                                style: TextStyle(
+                                    color: Color(0xffF17547), fontSize: 16))),
+                      ],
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: 200.0,
+                        height: 230.0,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/handbag.png'),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
-                      child: Center(
-                        child: Text('=',
-                            style:
-                                TextStyle(fontSize: 32, color: Colors.white)),
-                      )),
+                    )
+                  ],
                 ),
-              ],
-            ),
-            SizedBox(height: 20),
-          ],
-        ),
+              )),
+          SizedBox(
+            width: 20,
+          ),
+          Container(
+              width: 285,
+              height: 143,
+              decoration: BoxDecoration(
+                  color: Color(0xff1383F1),
+                  borderRadius: BorderRadius.circular(15)),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 150,
+                          height: 42,
+                          child: Text('50% OFF ON ALL ITEMS',
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                        Container(
+                          height: 13,
+                        ),
+                        OutlinedButton(
+                            onPressed: () {},
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              fixedSize: Size(120, 34),
+                              side: BorderSide.none,
+                            ),
+                            child: Text('Get Now',
+                                style: TextStyle(
+                                    color: Color(0xff1383F1), fontSize: 16))),
+                      ],
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: 200.0,
+                        height: 230.0,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/handbag.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              )),
+          SizedBox(
+            width: 20,
+          ),
+          Container(
+              width: 285,
+              height: 143,
+              decoration: BoxDecoration(
+                  color: Colors.pinkAccent,
+                  borderRadius: BorderRadius.circular(15)),
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: 150,
+                          height: 42,
+                          child: Text('ENJOY THE SALE ON CLOTHING',
+                              style: TextStyle(
+                                  fontSize: 17,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold)),
+                        ),
+                        Container(
+                          height: 13,
+                        ),
+                        OutlinedButton(
+                            onPressed: () {},
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              fixedSize: Size(120, 34),
+                              side: BorderSide.none,
+                            ),
+                            child: Text('Get Now',
+                                style: TextStyle(
+                                    color: Colors.pinkAccent, fontSize: 16))),
+                      ],
+                    ),
+                    Expanded(
+                      child: Container(
+                        width: 200.0,
+                        height: 230.0,
+                        decoration: BoxDecoration(
+                          image: DecorationImage(
+                            image: AssetImage('assets/images/handbag.png'),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
+              )),
+        ],
       ),
     );
+    throw UnimplementedError();
   }
 }
