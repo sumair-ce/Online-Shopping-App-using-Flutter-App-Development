@@ -40,9 +40,9 @@
         </td>
         <td valign="top">
             <h2>App UI</h2>
-            <img src="https://github.com/sumair-ce/Calculator-App-using-Flutter-App-Development/blob/main/Calculator-UI-Picture.png?raw=true" width="400" alt="App UI Image 1" />
+            <img src="https://github.com/sumair-ce/Online-Shopping-App-using-Flutter-App-Development/blob/main/First%20Image.png?raw=true" width="400" alt="App UI Image 1" />
             <br><br>
-            <img src="https://github.com/sumair-ce/Calculator-App-using-Flutter-App-Development/blob/main/Calculator-UI-Picture.png?raw=true" width="400" alt="App UI Image 2" />
+            <img src="https://github.com/sumair-ce/Online-Shopping-App-using-Flutter-App-Development/blob/main/Second%20Image.png?raw=true" width="400" alt="App UI Image 2" />
         </td>
     </tr>
 </table>
